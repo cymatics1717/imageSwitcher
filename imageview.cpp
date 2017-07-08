@@ -145,4 +145,5 @@ void imageView::replyFinished(QNetworkReply *reply)
       QString desc = lookup.value(reply);
       startup(pix,desc);
     }
+  reply->deleteLater();
 }
