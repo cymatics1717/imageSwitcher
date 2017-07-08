@@ -2,11 +2,9 @@
 #define BACKEND_H
 
 #include <QObject>
-#include <QNetworkAccessManager>
-#include <QNetworkReply>
 #include <QTcpServer>
 #include <QJsonObject>
-
+#include <QTcpSocket>
 class backEnd : public QObject
 {
     Q_OBJECT

@@ -5,6 +5,9 @@
 #include <QKeyEvent>
 #include <QJsonObject>
 #include <QGraphicsPixmapItem>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+
 #include "backend.h"
 
 class imageItem : public QObject, public QGraphicsPixmapItem
