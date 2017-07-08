@@ -2,23 +2,37 @@
 #define BACKEND_H
 
 #include <QObject>
-#include <QTcpServer>
 #include <QJsonObject>
-#include <QTcpSocket>
+
+extern "C"{
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <time.h>
+
+#include <nanomsg/nn.h>
+#include <nanomsg/pair.h>
+
+}
+
 class backEnd : public QObject
 {
     Q_OBJECT
 public:
     explicit backEnd(QObject *parent = 0);
-
+    ~backEnd();
 signals:
   void incomingPicture(QJsonObject obj);
+  void stopped();
 public slots:
-    void newConnection();
-    void readyRead();
-    void onDisConnection();
+  void run();
+  void stop();
+
 private:
-    QTcpServer *tcp_server;
+  int sock;
+  int init_flag;
+  bool keep_running;
 };
 
 #endif // BACKEND_H

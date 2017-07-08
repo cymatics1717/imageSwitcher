@@ -1,44 +1,61 @@
 #include "backend.h"
 #include <QDebug>
 #include <QJsonDocument>
-backEnd::backEnd(QObject *parent) : QObject(parent),tcp_server(new QTcpServer(this))
+
+#define NODE0 "node0"
+#define NODE1 "node1"
+#define SOCKET_ADDR "tcp://127.0.0.1:11111"
+
+backEnd::backEnd(QObject *parent) : QObject(parent),init_flag(-1),keep_running(true)
 {
-  if(!tcp_server->listen(QHostAddress::Any,11111)){
-      qDebug()<< "error tcp server listen.";
-      tcp_server->close();
+  int to = 100;
+  sock = nn_socket(AF_SP, NN_PAIR);
+  if(sock>=0 && nn_bind (sock, SOCKET_ADDR)>=0 &&
+     nn_setsockopt (sock, NN_SOL_SOCKET, NN_RCVTIMEO, &to, sizeof (to)) >= 0){
+      init_flag = 0;
+    } else {
+      init_flag =1;
     }
-
-  connect(tcp_server,SIGNAL(newConnection()),SLOT(newConnection()));
 }
 
-void backEnd::newConnection()
+backEnd::~backEnd()
 {
-  QTcpSocket *newpeer = tcp_server->nextPendingConnection();
-  connect(newpeer,SIGNAL(readyRead()),SLOT(readyRead()));
-  connect(newpeer,SIGNAL(disconnected()),newpeer,SLOT(deleteLater()));
-  connect(newpeer,SIGNAL(disconnected()),SLOT(onDisConnection()));
-
-  QByteArray hello("hello,this is wayne");
-  newpeer->write(hello);
-//  newpeer->disconnectFromHost();
+  nn_shutdown (sock, 0);
 }
 
-void backEnd::readyRead()
+void backEnd::run()
 {
-  QTcpSocket *peer = qobject_cast<QTcpSocket*>(sender());
-  if(peer){
-      QByteArray reply= peer->readAll();
-      qDebug()<< __FUNCTION__<<peer<<","<< reply;
+  if(init_flag) return;
 
-      QJsonDocument doc = QJsonDocument::fromJson(reply);
-      if(!doc.isNull()){
-          emit incomingPicture(doc.object());
+  while(keep_running)
+    {
+      ///////////////////////////////////////////
+      char *buf = NULL;
+      int result = nn_recv(sock, &buf, NN_MSG, 0);
+      if (result > 0)
+        {
+          qDebug() <<QString("got : [%1]:[%2]").arg(buf).arg(result);
+          QJsonDocument doc = QJsonDocument::fromJson(QByteArray(buf));
+          if(!doc.isNull()){
+              emit incomingPicture(doc.object());
+            }
+
+          nn_freemsg(buf);
+        }
+//      sleep(1);
+//      ///////////////////////////////////////////
+      char to[]="I got it";
+      int sz_n = strlen(to) + 1;
+      int ans = nn_send(sock, to, sz_n, 0);
+      if(ans>0){
+          qDebug() <<QString("sent: [%1]:[%2]").arg(to).arg(sz_n);
         }
     }
+  emit stopped();
 }
 
-void backEnd::onDisConnection()
+void backEnd::stop()
 {
-  QTcpSocket *peer = qobject_cast<QTcpSocket*>(sender());
-  qDebug()<< __FUNCTION__<<peer<<" disconnected.";
+  keep_running = false;
 }
+

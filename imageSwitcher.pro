@@ -32,4 +32,6 @@ HEADERS += \
     imageview.h \
     backend.h
 
+LIBS += -lnanomsg
+
 FORMS +=

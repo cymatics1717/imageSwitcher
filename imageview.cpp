@@ -2,10 +2,11 @@
 #include <QGLWidget>
 #include <QPropertyAnimation>
 #include <QDebug>
+#include <QThread>
 //#include <QtMath>
 #define m 400
 imageView::imageView(QWidget *parent): QGraphicsView(nullptr,parent),selected(nullptr),
-    scene(new QGraphicsScene(0,0,m,m,this)),server(new backEnd(this)),manager(new QNetworkAccessManager(this))
+    scene(new QGraphicsScene(0,0,m,m,this)),manager(new QNetworkAccessManager(this))
 {
   setGeometry(200,200,800,600);
 
@@ -20,7 +21,14 @@ imageView::imageView(QWidget *parent): QGraphicsView(nullptr,parent),selected(nu
   info->setPos(0,m/2);
   info->setZValue(1);
 
+  server = new backEnd;
+  QThread *worker = new QThread;
+  server->moveToThread(worker);
+
+  connect(worker, SIGNAL(started()), server, SLOT(run()));
   connect(server,SIGNAL(incomingPicture(QJsonObject)),SLOT(incomingImage(QJsonObject)));
+  connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
+
   connect(manager, SIGNAL(finished(QNetworkReply*)),SLOT(replyFinished(QNetworkReply*)));
 
   {
@@ -35,6 +43,8 @@ imageView::imageView(QWidget *parent): QGraphicsView(nullptr,parent),selected(nu
     obj.insert("desc","Flora_by_Marek_Koteluk");
     incomingImage(obj);
   }
+  worker->start();
+
 }
 
 void imageView::incomingImage(QJsonObject obj)
@@ -105,10 +115,10 @@ void imageView::mouseMoveEvent(QMouseEvent *e)
 {
 //  qDebug()<< e->pos() <<items(e->pos());
 //  info->setHtml(QString("pos:(%1,%2)").arg(e->pos().x()).arg(e->pos().y()));
-  imageItem *item = qgraphicsitem_cast<imageItem*>(itemAt(e->pos()));
-  if(item){
-      info->setHtml(buff.value(item).value("desc").toString());
-    }
+//  imageItem *item = qgraphicsitem_cast<imageItem*>(itemAt(e->pos()));
+//  if(item){
+//      info->setHtml(buff.value(item).value("desc").toString());
+//    }
 }
 
 void imageView::mousePressEvent(QMouseEvent *e)

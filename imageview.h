@@ -40,7 +40,7 @@ private:
   QGraphicsScene *scene;
   backEnd *server;
   QGraphicsTextItem *info;
-  QHash<imageItem*,QJsonObject> buff;
+//  QHash<imageItem*,QJsonObject> buff;
 
   QNetworkAccessManager *manager;
   QHash<QNetworkReply*,QString> lookup;
