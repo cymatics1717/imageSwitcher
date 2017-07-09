@@ -2,8 +2,6 @@
 #include <QDebug>
 #include <QJsonDocument>
 
-#define NODE0 "node0"
-#define NODE1 "node1"
 #define SOCKET_ADDR "tcp://127.0.0.1:11111"
 
 backEnd::backEnd(QObject *parent) : QObject(parent),init_flag(-1),keep_running(true)
@@ -45,7 +43,7 @@ void backEnd::run()
 //      sleep(1);
 //      ///////////////////////////////////////////
       char to[]="I got it";
-      int sz_n = strlen(to) + 1;
+      size_t sz_n = strlen(to) + 1;
       int ans = nn_send(sock, to, sz_n, 0);
       if(ans>0){
           qDebug() <<QString("sent: [%1]:[%2]").arg(to).arg(sz_n);
