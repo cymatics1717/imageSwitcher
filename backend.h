@@ -33,6 +33,7 @@ private:
   int sock;
   int init_flag;
   bool keep_running;
+  int cnt;
 };
 
 #endif // BACKEND_H

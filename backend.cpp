@@ -11,6 +11,7 @@ backEnd::backEnd(QObject *parent) : QObject(parent),init_flag(-1),keep_running(t
   if(sock>=0 && nn_bind (sock, SOCKET_ADDR)>=0 &&
      nn_setsockopt (sock, NN_SOL_SOCKET, NN_RCVTIMEO, &to, sizeof (to)) >= 0){
       init_flag = 0;
+      cnt = 0;
     } else {
       init_flag =1;
     }
@@ -40,13 +41,12 @@ void backEnd::run()
 
           nn_freemsg(buf);
         }
-//      sleep(1);
+      sleep(1);
 //      ///////////////////////////////////////////
-      char to[]="I got it";
-      size_t sz_n = strlen(to) + 1;
-      int ans = nn_send(sock, to, sz_n, 0);
+      QString data = QString("backEnd::%1 [%2]").arg(__FUNCTION__).arg(++cnt);
+      int ans = nn_send(sock, data.toStdString().c_str(), data.size(), 0);
       if(ans>0){
-          qDebug() <<QString("sent: [%1]:[%2]").arg(to).arg(sz_n);
+          qDebug() <<QString("sent: [%1]:[%2]").arg(data).arg(ans);
         }
     }
   emit stopped();

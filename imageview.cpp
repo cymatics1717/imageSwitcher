@@ -78,7 +78,7 @@ void imageView::fadingAway()
 
 void imageView::animate(imageItem *item)
 {
-    qDebug()<<sceneRect();
+//    qDebug()<<sceneRect();
     QPropertyAnimation *ani = new QPropertyAnimation(item,"pos");
     connect(ani,SIGNAL(finished()),this,SLOT(fadingAway()));
     ani->setDuration(3000);
