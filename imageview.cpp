@@ -132,6 +132,7 @@ void imageView::mousePressEvent(QMouseEvent *e)
 
 imageView::~imageView()
 {
+    delete server;
 }
 
 void imageView::startup(const QPixmap &pix,QString desc){
