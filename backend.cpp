@@ -33,7 +33,7 @@ void backEnd::run()
       int result = nn_recv(sock, &buf, NN_MSG, 0);
       if (result > 0)
         {
-          qDebug() <<QString("got : [%1]:[%2]").arg(buf).arg(result);
+          qDebug() <<QString("got : [%1]:[%2]").arg(QString(QByteArray(buf,result))).arg(result);
           QJsonDocument doc = QJsonDocument::fromJson(QByteArray(buf));
           if(!doc.isNull()){
               emit incomingPicture(doc.object());
