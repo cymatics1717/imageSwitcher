@@ -12,10 +12,12 @@ while True:
     cnt = (cnt+1) % 100
     name = '{}-{}'.format(datetime.datetime.now(), cnt)
     data = {
-        'url': "http://www.stevenround-birdphotography.com/source/image/puffin-{:02d}.jpg".format(cnt),
-        'desc': name
+        'desc': name,
+        'url': "http://www.stevenround-birdphotography.com/source/image/puffin-{:02d}.jpg".format(cnt)
     }
-    sock.send(json.dumps(data, indent=4))
+    msg = json.dumps(data)
+    sock.send(msg)
+    print("<---{}".format(msg))
     time.sleep(1)
     msg = sock.recv()
-    print('[{}] received {}'.format(name, msg))
+    print("--->{}".format(msg.decode()))

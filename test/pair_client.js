@@ -10,19 +10,18 @@ var cnt = 1;
 pair.connect(addr);
 
 pair.on('data', function (buf) {
-  console.log('received response: ', buf.toString());
+  console.log("--->"+buf.toString());
   // req.close();
 });
 
 function intervalFunc() {
 	data={"url":"","desc":""};
 	tmp = ("0" + cnt++).slice(-2);
-	data["url"]="http://www.stevenround-birdphotography.com/source/image/puffin-"
-		+ tmp +".jpg";
-	data["desc"] = "from node js"+tmp 
+	data["url"]="http://www.stevenround-birdphotography.com/source/image/puffin-" + tmp +".jpg";
+	data["desc"] = "from node js"+ tmp 
 	pair.send(JSON.stringify(data));
 
-	console.log('send data: '+JSON.stringify(data));
+	console.log('<---'+JSON.stringify(data));
 }
 
 setInterval(intervalFunc, 2000);

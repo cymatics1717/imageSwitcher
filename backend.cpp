@@ -1,4 +1,5 @@
 #include "backend.h"
+#include <QDateTime>
 #include <QDebug>
 #include <QJsonDocument>
 
@@ -43,7 +44,8 @@ void backEnd::run()
         }
       sleep(1);
 //      ///////////////////////////////////////////
-      QString data = QString("backEnd::%1 [%2]").arg(__FUNCTION__).arg(++cnt);
+      QString data = QString("%1-backEnd::%2 [%3]").arg(QDateTime::currentDateTime().toString(Qt::ISODateWithMs))
+                                                        .arg(__FUNCTION__).arg(++cnt);
       int ans = nn_send(sock, data.toStdString().c_str(), data.size(), 0);
       if(ans>0){
           qDebug() <<QString("sent: [%1]:[%2]").arg(data).arg(ans);
