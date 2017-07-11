@@ -4,9 +4,7 @@ var HOST = '127.0.0.1';
 var PORT = 11111;
 var cnt = 1;
 
-
-var client = new net.Socket();
-client.connect(PORT, HOST, function() {
+var client = net.connect(PORT, HOST, function() {
     console.log('CONNECTED TO: ' + HOST + ':' + PORT);
     client.write('I am wayne, from NodeJS !');
 });

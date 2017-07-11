@@ -1,6 +1,8 @@
 #include "backend.h"
+#include <QDateTime>
 #include <QDebug>
 #include <QJsonDocument>
+#include <QTcpSocket>
 backEnd::backEnd(QObject *parent) : QObject(parent),tcp_server(new QTcpServer(this))
 {
   if(!tcp_server->listen(QHostAddress::Any,11111)){
@@ -18,6 +20,7 @@ void backEnd::newConnection()
   connect(newpeer,SIGNAL(disconnected()),newpeer,SLOT(deleteLater()));
   connect(newpeer,SIGNAL(disconnected()),SLOT(onDisConnection()));
 
+  qDebug() << newpeer->peerAddress() <<":" << newpeer->peerPort()<< newpeer->peerName();
   QByteArray hello("hello,this is wayne");
   newpeer->write(hello);
 //  newpeer->disconnectFromHost();
@@ -34,11 +37,15 @@ void backEnd::readyRead()
       if(!doc.isNull()){
           emit incomingPicture(doc.object());
         }
+      peer->write(QString("%1:%2").arg(__FUNCTION__)
+                  .arg(QDateTime::currentDateTime().toString()).toUtf8());
     }
 }
 
 void backEnd::onDisConnection()
 {
   QTcpSocket *peer = qobject_cast<QTcpSocket*>(sender());
-  qDebug()<< __FUNCTION__<<peer<<" disconnected.";
+  if(peer){
+      qDebug()<< __FUNCTION__<<peer->peerAddress()<<peer->peerPort()<<" disconnected.";
+  }
 }
