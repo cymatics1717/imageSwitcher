@@ -24,12 +24,11 @@ client.on('close', function() {
 
 function intervalFunc() {
 	data={"url":"","desc":""};
-	tmp = ("0" + cnt++).slice(-2);
 	data["url"]="http://www.stevenround-birdphotography.com/source/image/puffin-"
-		+ tmp +".jpg";
-	data["desc"] = "from node js"+tmp 
+		+ ("0" + cnt++).slice(-2) +".jpg";
+	data["desc"] = "from node js"+cnt 
 	client.write(JSON.stringify(data));
 	console.log('<---'+JSON.stringify(data));
 }
 
-setInterval(intervalFunc, 2000);
+setInterval(intervalFunc, 20);
