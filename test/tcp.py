@@ -15,9 +15,22 @@ while True:
         'url': "http://www.stevenround-birdphotography.com/source/image/puffin-{:02d}.jpg".format(cnt),
         'desc': name
     }
-    s.send(json.dumps(data, indent=4).encode('utf-8'))
-    time.sleep(1)
-    data = s.recv(2014).decode('utf-8')
-    print('[{}] received {}'.format(name, data))
+    msg = json.dumps(data)
+    try:
+        s.send(msg.encode())
+        print("<---{}".format(msg))
+        time.sleep(1)
+        data = s.recv(2048).decode()
+        print('--->{}'.format(name, data))
+    except KeyboardInterrupt:
+        print("canceled by the user")
+        break
+    except Exception as ex:
+        print("Exception:", ex.message)
+        # break
+
+
+
+
 
 s.close()

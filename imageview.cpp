@@ -42,10 +42,11 @@ void imageView::incomingImage(QJsonObject obj)
   if(!obj.isEmpty()&&obj.contains("url")&&obj.contains("desc")){
       QString url = obj.value("url").toString();
       QString desc = obj.value("desc").toString();
-      qDebug() <<QUrl(url).scheme();
+//      qDebug() <<QUrl(url).scheme();
       if(QUrl(url).scheme()=="http"){
           QNetworkRequest req(url);
           QNetworkReply *reply = manager->get(req);
+          connect(reply, SIGNAL(error(QNetworkReply::NetworkError)),SLOT(slotError(QNetworkReply::NetworkError)));
           lookup.insert(reply,desc);
         } else {
           startup(QPixmap(url),desc);
@@ -68,7 +69,7 @@ void imageView::fadingAway()
 
 void imageView::animate(imageItem *item)
 {
-    qDebug()<<sceneRect();
+//    qDebug()<<sceneRect();
     QPropertyAnimation *ani = new QPropertyAnimation(item,"pos");
     connect(ani,SIGNAL(finished()),this,SLOT(fadingAway()));
     ani->setDuration(3000);
@@ -80,7 +81,7 @@ void imageView::animate(imageItem *item)
 
 void imageView::keyPressEvent(QKeyEvent *e)
 {
-  qDebug() <<e->text();
+//  qDebug() <<e->text();
   switch (e->key()) {
     case Qt::Key_F:
       {
@@ -105,10 +106,10 @@ void imageView::mouseMoveEvent(QMouseEvent *e)
 {
 //  qDebug()<< e->pos() <<items(e->pos());
 //  info->setHtml(QString("pos:(%1,%2)").arg(e->pos().x()).arg(e->pos().y()));
-  imageItem *item = qgraphicsitem_cast<imageItem*>(itemAt(e->pos()));
-  if(item){
-      info->setHtml(buff.value(item).value("desc").toString());
-    }
+//  imageItem *item = qgraphicsitem_cast<imageItem*>(itemAt(e->pos()));
+//  if(item){
+//      info->setHtml(buff.value(item).value("desc").toString());
+//    }
 }
 
 void imageView::mousePressEvent(QMouseEvent *e)
@@ -138,7 +139,7 @@ void imageView::startup(const QPixmap &pix,QString desc){
 void imageView::replyFinished(QNetworkReply *reply)
 {
   QByteArray ans =reply->readAll();
-  qDebug()<< ans.size();
+//  qDebug()<< ans.size();
 
   QPixmap pix;
   if(pix.loadFromData(ans)){
@@ -146,4 +147,10 @@ void imageView::replyFinished(QNetworkReply *reply)
       startup(pix,desc);
     }
   reply->deleteLater();
+}
+
+void imageView::slotError(QNetworkReply::NetworkError err)
+{
+    QNetworkReply *reply = qobject_cast<QNetworkReply*>(sender());
+    qDebug()<<reply<<"," << err;
 }

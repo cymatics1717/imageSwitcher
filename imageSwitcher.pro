@@ -26,10 +26,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
     imageview.cpp \
-    backend.cpp
+    backend.cpp \
+    eventbus.cpp
 
 HEADERS += \
     imageview.h \
-    backend.h
+    backend.h \
+    eventbus.h
+
+LIBS += -lnanomsg
 
 FORMS +=

@@ -26,6 +26,8 @@ public:
 
 public slots:
   void replyFinished(QNetworkReply*);
+  void slotError(QNetworkReply::NetworkError);
+
   void incomingImage(QJsonObject obj);
   void fadingAway();
   void animate(imageItem *item);

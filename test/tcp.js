@@ -10,7 +10,7 @@ var client = net.connect(PORT, HOST, function() {
 });
 
 client.on('data', function(data) {
-    console.log('DATA: ' + data);
+    console.log('--->' + data);
 });
 
 client.on('error', function() {
@@ -29,7 +29,7 @@ function intervalFunc() {
 		+ tmp +".jpg";
 	data["desc"] = "from node js"+tmp 
 	client.write(JSON.stringify(data));
-	console.log('send data: '+JSON.stringify(data));
+	console.log('<---'+JSON.stringify(data));
 }
 
 setInterval(intervalFunc, 2000);

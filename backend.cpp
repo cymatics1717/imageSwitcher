@@ -37,8 +37,8 @@ void backEnd::readyRead()
       if(!doc.isNull()){
           emit incomingPicture(doc.object());
         }
-      peer->write(QString("%1:%2").arg(__FUNCTION__)
-                  .arg(QDateTime::currentDateTime().toString()).toUtf8());
+      peer->write(QString("backEnd::%1:%2").arg(__FUNCTION__)
+                  .arg(QDateTime::currentDateTime().toString(Qt::ISODateWithMs)).toUtf8());
     }
 }
 
