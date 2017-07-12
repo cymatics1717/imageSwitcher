@@ -24,4 +24,4 @@ function intervalFunc() {
 	console.log('<---'+JSON.stringify(data));
 }
 
-setInterval(intervalFunc, 2000);
+setInterval(intervalFunc, 1000);

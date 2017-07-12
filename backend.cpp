@@ -35,21 +35,18 @@ void backEnd::run()
       if (result > 0)
         {
           qDebug() <<QString("got : [%1]:[%2]").arg(QString(QByteArray(buf,result))).arg(result);
-          QJsonDocument doc = QJsonDocument::fromJson(QByteArray(buf));
-          if(!doc.isNull()){
-              emit incomingPicture(doc.object());
-            }
+          QJsonDocument doc = QJsonDocument::fromJson(QByteArray(buf,result));
+          if(!doc.isNull()) emit incomingPicture(doc.object());
 
           nn_freemsg(buf);
+
+          QString data = QString("%1-backEnd::%2 [%3]").arg(QDateTime::currentDateTime().toString(Qt::ISODateWithMs))
+                                                            .arg(__FUNCTION__).arg(++cnt);
+          int ans = nn_send(sock, data.toStdString().c_str(), data.size(), 0);
+          if(ans>0) qDebug() <<QString("sent: [%1]:[%2]").arg(data).arg(ans);
         }
-      sleep(1);
+//      sleep(1);
 //      ///////////////////////////////////////////
-      QString data = QString("%1-backEnd::%2 [%3]").arg(QDateTime::currentDateTime().toString(Qt::ISODateWithMs))
-                                                        .arg(__FUNCTION__).arg(++cnt);
-      int ans = nn_send(sock, data.toStdString().c_str(), data.size(), 0);
-      if(ans>0){
-          qDebug() <<QString("sent: [%1]:[%2]").arg(data).arg(ans);
-        }
     }
   emit stopped();
 }
